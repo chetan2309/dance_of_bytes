@@ -1,3 +1,5 @@
+mod main_test;
+
 use std::{
     fs::OpenOptions,
     io::{self, Read, Write},
@@ -9,12 +11,12 @@ fn main() -> io::Result<()> {
     let key = b"12";
     let key_len = key.len() as u8;
     let value = b"24";
+    let value_len = value.len() as u8;
     // let key_len_bytes = [key_len];
 
     let mut buffer = Vec::new();
     buffer.push(key_len);
     buffer.extend_from_slice(key);
-    let value_len = value.len() as u8;
     buffer.push(value_len);
     buffer.extend_from_slice(value);
 
