@@ -28,5 +28,8 @@ mod tests {
 
         let file_vector = read_from_file(&FILE_PATH).unwrap();
         assert_eq!(file_vector.len(), 1);
+        assert_eq!(file_vector[0].0, key);
+        assert_eq!(file_vector[0].1, value);
+        assert_ne!(file_vector[0].0, b"13");
     }
 }
