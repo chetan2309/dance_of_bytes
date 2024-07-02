@@ -1,6 +1,6 @@
 mod main_test;
 
-use dance_of_bytes::read_from_file;
+use dance_of_bytes::{read_from_file, KeyValue};
 use std::{
     fs::OpenOptions,
     io::{self, Write},
@@ -9,38 +9,16 @@ use std::{
 const FILE_PATH: &'static str = "buffer_file.txt";
 
 fn main() -> io::Result<()> {
-    let key = b"12";
-    let key_len = key.len() as u8;
-    let value = b"24";
-    let value_len = value.len() as u8;
-    // let key_len_bytes = [key_len];
-
-    let mut buffer = Vec::new();
-    buffer.push(key_len);
-    buffer.extend_from_slice(key);
-    buffer.push(value_len);
-    buffer.extend_from_slice(value);
-
+    let kv1 = KeyValue::new(b"12", b"24", Some(15), false);
     let mut file = OpenOptions::new()
         .read(true)
         .write(true)
         .create(true)
         .open(FILE_PATH)?;
-    file.write_all(&buffer)?;
+    file.write_all(&kv1.to_buffer())?;
 
-    let key = b"13";
-    let key_len = key.len() as u8;
-    let value = b"26";
-    // let key_len_bytes = [key_len];
-
-    let mut buffer = Vec::new();
-    buffer.push(key_len);
-    buffer.extend_from_slice(key);
-    let value_len = value.len() as u8;
-    buffer.push(value_len);
-    buffer.extend_from_slice(value);
-
-    file.write_all(&buffer)?;
+    let kv2 = KeyValue::new(b"13", b"26", Some(20), false);
+    file.write_all(&kv2.to_buffer())?;
 
     read_from_file(FILE_PATH)?;
     Ok(())
