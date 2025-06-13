@@ -1,11 +1,7 @@
 use std::{
     fs::OpenOptions,
-    io::{self, Read},
-    ops::Add,
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    io::{self, Read}
 };
-
-const SCONDS_IN_MINS: u64 = 60;
 
 pub struct KeyValue {
     pub key: Vec<u8>,
@@ -15,30 +11,24 @@ pub struct KeyValue {
 }
 
 impl KeyValue {
-    pub fn new(key: &[u8], val: &[u8], expiry: Option<u64>, tombstone: bool) -> Self {
+    pub fn new(key: &[u8], val: &[u8], timestamp: Option<u64>, tombstone: bool) -> Self {
         KeyValue {
             key: key.to_vec(),
             value: val.to_vec(),
-            timestamp: expiry.map(|mins: u64| {
-                SystemTime::now()
-                    .duration_since(UNIX_EPOCH)
-                    .unwrap()
-                    .add(Duration::from_secs(mins * SCONDS_IN_MINS))
-                    .as_secs()
-            }),
+            timestamp,
             tombstone,
         }
     }
 
     pub fn to_buffer(&self) -> Vec<u8> {
         let mut buffer = Vec::new();
-        buffer.extend_from_slice(&(self.key.len() as u8).to_le_bytes());
-        buffer.extend_from_slice(&(self.value.len() as u8).to_le_bytes());
+        buffer.push(self.key.len() as u8);
+        buffer.push(self.value.len() as u8);
 
         buffer.extend_from_slice(&self.key);
         buffer.extend_from_slice(&self.value);
 
-        buffer.extend_from_slice(&self.timestamp.unwrap().to_le_bytes());
+        buffer.extend_from_slice(&self.timestamp.unwrap_or(0).to_le_bytes());
         buffer.push(self.tombstone as u8);
 
         buffer
