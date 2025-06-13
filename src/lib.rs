@@ -11,11 +11,11 @@ pub struct KeyValue {
 }
 
 impl KeyValue {
-    pub fn new(key: &[u8], val: &[u8], timestamp: Option<u64>, tombstone: bool) -> Self {
+    pub fn new(key: &[u8], val: &[u8], expiry: Option<u64>, tombstone: bool) -> Self {
         KeyValue {
             key: key.to_vec(),
             value: val.to_vec(),
-            timestamp,
+            timestamp: expiry,
             tombstone,
         }
     }
