@@ -25,7 +25,7 @@ impl KeyValue {
         kv
     }
 
-    fn calculate_checksum(&self) -> u32 {
+    pub fn calculate_checksum(&self) -> u32 {
         let mut hasher = Hasher::new();
         hasher.update(&self.key);
         hasher.update(&self.value);
