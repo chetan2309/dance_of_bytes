@@ -6,10 +6,13 @@ mod tests {
 
     use crate::read_from_file;
 
+    use crc32fast;
+
     const FILE_PATH: &'static str = "buffer_file_test.txt";
     #[test]
     fn read_single_kv_pair_from_file() -> io::Result<()> {
-        let kv1 = KeyValue::new(b"12", b"24", Some(15), false);
+        let checksum = crc32fast::hash(b"foo bar baz");
+        let kv1 = KeyValue::new(b"12", b"24", Some(15), false, checksum);
         let mut file = OpenOptions::new()
             .read(true)
             .write(true)
@@ -22,6 +25,7 @@ mod tests {
         assert_eq!(file_vector[0].key, b"12");
         assert_eq!(file_vector[0].value, b"24");
         assert_ne!(file_vector[0].key, b"13");
+        assert_eq!(file_vector[0].checksum, checksum);
         Ok(())
     }
 }
